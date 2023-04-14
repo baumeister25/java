@@ -1,15 +1,53 @@
+:toc:
+:toc-placement!:
+
 = devonfw website
 
 This is the Java part of the link:https://devonfw.com[devonfw website].
 
-== Local development of the website
+toc::[]
 
-To test changes locally, this part of the website can be built separately from the rest of the website.
+== Structure of the repository
+// Explain the folders and files
+=== Working on articles
+
+The website is based on link:https://antora.org/[antora]. 
+Therefore, when working on article everything is inside the `modules/ROOT` folder.
+Antora can be structured in several modules. Until now, we've decided to go with a single module (ROOT) containing a folder structure to organize the articles.
+
+Inside the ROOT module the following folders and files exist:
+images/:: Contains all images referenced in the articles. Because of the limited amount of images until now, there's no need to structure them in subfolders.
+pages/:: Contain the actual asciidoc articles. The structure inside this article should be in sync with the hierarchie shown on the website menu.
+nav.adoc:: This files contains the hierarchy in which the articles are structured on the website. 
+
+=== Working on the README
+
+The README itself is an asciidoc file as well. 
+Images references from this README are located in the `img` folder.
+
+=== Working on the github pipeline
+
+The `.github/` folder contains the pipeline definition for github actions.
+The `build` folder contains the generated website, created by github actions. 
+The website itself is hosted with github pages, that takes the served content from the `build` folder.
+
+=== Working on antora
+
+The `antora-playbook.yml` and `antora.yml` contain the general configuration as defined by antora.
+The `package.json` contains scripts for building the website with link::https://nodejs.dev/en/[Node.js] package manager link::https://nodejs.dev/en/learn/an-introduction-to-the-npm-package-manager/[npm]. 
+Furthermore, it contains all dependencies that are necessary for building the website, like the antora-lunr plugin that enables the search on the website.
+The `extension` folder contains individual extensions like the tab's that are not asciidoc native.
+
+== View the website locally
+
+Building and viewing the website on the local machine provides the great opportunity to view changed/created how they would look like online.
+link::https://nodejs.dev/en/[Node.js] including the package manager link::https://nodejs.dev/en/learn/an-introduction-to-the-npm-package-manager/[npm] need to be installed to run the website locally.
 
 === Install dependencies
 
 Before anything else, the dependencies needs to be installed. This is a onetime job, until the package.json changes.
-```
+
+```shell
 npm install
 ```
 
@@ -43,7 +81,45 @@ As long as the server is running a re-build using the build-command is enough to
 
 To stop the server press `<CTRL>+C`.
 
-== Articles
+== Contribute to devonfw
+
+In devonfw we encourage everyone to contribute to collect experiences in several areas.
+Contribution can include writing an article, requesting changes in existing articles, providing feedback or ideas.
+
+=== Contribute to articles
+
+=== Contribute on pull requests
+=== Work on issues
+=== Give feedback
+ The easiest way to give feedback is on the link::https://devonfw.com/docs/java/current[website] itself.
+ You can add comments to each article.
+ T
+
+
+link::https://github.com/firstcontributions/first-contributions[First contributions]
+=== Issues
+
+// TODO: Rethink this.
+
+
+In Github issues are created and tracked to propose new changes and to track progress.
+It was decided to create one issue per article page. 
+Instead of  closing an issue after work is done (The usual flow) those issues keep track of the unresolved discussions, history and open points. 
+Issues are only closed, when the article is removed or all questions are resolved. Issues might be reopened once new questions arise.
+
+Each article contains a comment in the first line referencing the issue.
+
+=== Branches
+
+* Only master and feature branches are used
+* feature branches should start with 'feature' and include the issue number and a speaking name. `feature/<issue-number>_<speaking name>. For example `feature/16_exception_handling`
+
+=== Commits
+
+* Include the issue number into each commit
+* Write good commit messages. The rules mentioned link:https://cbea.ms/git-commit/[here] could help you on that.
+
+== Styleguide
 
 Articles should be written in a passive form not using "we", "you", ...
 
@@ -69,71 +145,13 @@ Byte array will cause problems if BLOBs get large because the entire BLOB is loa
 * Mixing with other granularities causes problems when comparing one value to another.
 ====
 
-
 === Evaluation articles
 
 The evaluation articles compare technologies, where there's no standardization possible and highlight the benefits and concerns of each technology. 
 
 A final recommendation or rule of thumb at the end of the article helps the reader to get to a educated decision for a certain problem.
 
-
-== Examples
-
-Showing a concrete implementation explains certain circumstances better than a thousand words. 
-Therefore, devonfw provides tiny examples that explain core concepts.
-The examples are located in the `examples` folder. 
-The underlying structure should follow the structure of the website, so that examples belonging to articles can be easily found. 
-Articles that have an example should link to the example on the website.
-The link should always point to the root folder of the concrete example.
-
-=== Example Guidelines
-
-* Be a own project based on a supported framework
-* Contain a README.adoc file that explains the example, what it should show and how to use (execute) it
-* Use Unit tests to show most of the test cases 
-* Be as small as possible. Only create classes and layers that are necessary to show the concrete case(s)
-* Consistent with devonfw. Coding Conventions, naming conventions, good practices that are described should all be applied on th written code. Therefore, keep is small!
-
-=== Example Deployments 
-
-If it is necessary to build and deploy the application itself or third party tools, then the example should also deliver:
-
-* Multistage Dockerfile (at least build and deploy)
-* Helm Charts
-* Kubernetes Yamls (if further necessary to helm)
-* link:http://task.dev[Taskfile] that combines the deploy commands
-
-=== Example Business Case
-
-It has shown to be better understandable, when the examples follow a common business case.
-In devonfw a restaurant application has always been the #1 use case.
-The most common use case from the restaurant is the booking process.
-
-Therefore, an example application should if possible concentrate on the booking management of a restaurant.
-The data model of a booking contains:
-
-* The Booking itself containing
-** n friends
-** whatever is necessary to show the examples case
-* Invited Guests for a booking (Here the idea is that a booking is created online and friends can be invited via their mail)
-** an email address
-** whatever is also necessary
-
-The provided workflow could contain:
-
-* BookingManagementRestService with endpoints for
-** create a booking
-** get a certain booking by id
-** get all bookings
-* UcManageBooking the logic implementation if necessary
-* BookingRepository
-* InvitedGuestRepository
-
-image::img/example_use_case.drawio.svg[]
-
-== Asciidoc
-
-=== Tabs
+=== Use Tabs 
 
 It is possible to add tabs if there is different for different situations. Currently only Spring and Quarkus are separated this way. The tabs are added with:
 
@@ -189,24 +207,56 @@ public class ChildEntity {
 More information can be found link:https://docs.asciidoctor.org/asciidoc/latest/verbatim/callouts/[here].
 
 
-== Git and Github
+== Examples
 
-=== Issues
+Showing a concrete implementation explains certain circumstances better than a thousand words. 
+Therefore, devonfw provides tiny examples that explain core concepts.
+The examples are located in the `examples` folder. 
+The underlying structure should follow the structure of the website, so that examples belonging to articles can be easily found. 
+Articles that have an example should link to the example on the website.
+The link should always point to the root folder of the concrete example.
 
-In Github issues are created and tracked to propose new changes and to track progress.
-It was decided to create one issue per article page. 
-Instead of  closing an issue after work is done (The usual flow) those issues keep track of the unresolved discussions, history and open points. 
-Issues are only closed, when the article is removed or all questions are resolved. Issues might be reopened once new questions arise.
+=== Example Guidelines
 
-Each article contains a comment in the first line referencing the issue.
+* Be a own project based on a supported framework
+* Contain a README.adoc file that explains the example, what it should show and how to use (execute) it
+* Use Unit tests to show most of the test cases 
+* Be as small as possible. Only create classes and layers that are necessary to show the concrete case(s)
+* Consistent with devonfw. Coding Conventions, naming conventions, good practices that are described should all be applied on th written code. Therefore, keep is small!
 
-=== Branches
+=== Example Deployments 
 
-* Only master and feature branches are used
-* feature branches should start with 'feature' and include the issue number and a speaking name. `feature/<issue-number>_<speaking name>. For example `feature/16_exception_handling`
+If it is necessary to build and deploy the application itself or third party tools, then the example should also deliver:
 
-=== Commits
+* Multistage Dockerfile (at least build and deploy)
+* Helm Charts
+* Kubernetes Yamls (if further necessary to helm)
+* link:http://task.dev[Taskfile] that combines the deploy commands
 
-* Include the issue number into each commit
-* Write good commit messages. The rules mentioned link:https://cbea.ms/git-commit/[here] could help you on that.
+=== Example Business Case
 
+It has shown to be better understandable, when the examples follow a common business case.
+In devonfw a restaurant application has always been the #1 use case.
+The most common use case from the restaurant is the booking process.
+
+Therefore, an example application should if possible concentrate on the booking management of a restaurant.
+The data model of a booking contains:
+
+* The Booking itself containing
+** n friends
+** whatever is necessary to show the examples case
+* Invited Guests for a booking (Here the idea is that a booking is created online and friends can be invited via their mail)
+** an email address
+** whatever is also necessary
+
+The provided workflow could contain:
+
+* BookingManagementRestService with endpoints for
+** create a booking
+** get a certain booking by id
+** get all bookings
+* UcManageBooking the logic implementation if necessary
+* BookingRepository
+* InvitedGuestRepository
+
+image::img/example_use_case.drawio.svg[]
